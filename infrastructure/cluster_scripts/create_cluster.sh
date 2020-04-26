@@ -5,19 +5,19 @@ machineType="n1-standard-1"
 diskSize="15"
 numWorkers="2"
 
-if [-nz $1]; then
+if [[ -nz $1 ]]; then
   region=$1
 fi
 
-if [-nz $2]; then
+if [[ -nz $2 ]]; then
   machineType=$2
 fi
 
-if [-nz $3]; then
+if [[ -nz $3 ]]; then
   diskSize=$3
 fi
 
-if [-nz $4]; then
+if [[ -nz $4 ]]; then
   numWorkers=$4
 fi
 
