@@ -1,7 +1,7 @@
 #!/bin/bash
 region="us-east1"
 
-if [[ -nz $1 ]]; then
+if [ ! -z $1 ]; then
   region=$1
 fi
 
