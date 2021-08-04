@@ -1,9 +1,9 @@
 #!/bin/bash
 
-region="us-east1"
+region="europe-west2"
 machineType="n1-standard-1"
 diskSize="15"
-numWorkers="2"
+numWorkers="3"
 
 if [ ! -z $1 ]; then
   region=$1
@@ -28,13 +28,20 @@ IFS='@' # space is set as delimiter
 read -ra ADDR <<< "$fullName" # str is read into an array as tokens separated by IFS
 userName=${ADDR[0]}
 
-gcloud dataproc clusters create ${projectName}-${userName}-cluster\
+#Enable Cloud SQL Admin API
+gcloud dataproc clusters create ${projectName}-cluster\
     --region ${region} \
-    --zone ${region}-d \
+    --zone ${region}-a \
+    --bucket "datalake-warehouse" \
     --master-machine-type ${machineType} \
     --master-boot-disk-size ${diskSize} \
     --num-workers ${numWorkers} \
     --worker-machine-type ${machineType} \
     --worker-boot-disk-size ${diskSize} \
-    --project ${projectName}
-    #--initialization-actions
+    --project ${projectName} \
+    --scopes sql-admin,bigquery \
+    --image-version 1.4 \
+    --initialization-actions gs://goog-dataproc-initialization-actions-${region}/cloud-sql-proxy/cloud-sql-proxy.sh \
+    --properties hive:hive.metastore.warehouse.dir=gs://datalake-warehouse/ \
+    --metadata enable-cloud-sql-proxy-on-workers=false \
+    --metadata "hive-metastore-instance=uk-training-innovation:${region}:hive-metastore" \
